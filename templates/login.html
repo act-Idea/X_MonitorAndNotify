@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ログイン — My Website</title>
+    <style>
+        :root{--bg:#f4f7fb;--card:#ffffff;--primary:#3b82f6;--muted:#6b7280}
+        html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#111}
+        .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px}
+        .card{width:100%;max-width:420px;background:var(--card);border-radius:12px;box-shadow:0 6px 24px rgba(15,23,42,0.08);padding:28px}
+        h1{margin:0 0 8px;font-size:20px}
+        p.lead{margin:0 0 18px;color:var(--muted)}
+        form{display:flex;flex-direction:column;gap:12px}
+        label{font-size:13px;color:var(--muted)}
+        input[type=text],input[type=email],input[type=password]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:14px}
+        .actions{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+        .btn{background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+        .btn:disabled{opacity:0.6;cursor:not-allowed}
+        .row{display:flex;gap:8px;align-items:center}
+        .muted{color:var(--muted);font-size:13px}
+        .flash{background:#fffbeb;border:1px solid #f5e1a7;padding:10px;border-radius:8px;color:#7c4a00;margin-bottom:8px}
+        .password-toggle{background:transparent;border:0;color:var(--primary);cursor:pointer;font-size:13px}
+        @media (max-width:420px){.card{padding:20px}}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="card" role="main">
+            <h1>ログイン</h1>
+            <p class="lead">アカウントにサインインしてください。</p>
+
+            {# Flask の flash メッセージを表示します #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="flash">{{ msg }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/login" method="post" autocomplete="on" novalidate>
+                {# CSRF を使用している場合はここにトークンを挿入してください: {{ csrf_token() }} #}
+
+                <div>
+                    <label for="email">メールアドレス</label>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required autofocus>
+                </div>
+
+                <div>
+                    <label for="password">パスワード</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <input id="password" name="password" type="password" placeholder="パスワード" required style="flex:1">
+                        <button type="button" class="password-toggle" id="togglePwd">表示</button>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <label class="row"><input type="checkbox" name="remember"> <span class="muted">ログイン状態を保持する</span></label>
+                    <button class="btn" type="submit">サインイン</button>
+                </div>
+
+                <div style="margin-top:12px;text-align:center">
+                    <a href="/forgot" class="muted">パスワードを忘れた場合</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            var btn = document.getElementById('togglePwd');
+            var pwd = document.getElementById('password');
+            if(!btn||!pwd) return;
+            btn.addEventListener('click', function(){
+                if(pwd.type==='password'){ pwd.type='text'; btn.textContent='非表示'; }
+                else{ pwd.type='password'; btn.textContent='表示'; }
+            });
+        })();
+    </script>
+</body>
+</html>
