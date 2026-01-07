@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>結果一覧</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Noto Sans JP", sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #111827;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .brand { font-weight: 700; }
+    header a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin-left: 12px;
+    }
+    header a:hover { color: #fff; }
+    .container {
+      max-width: 900px;
+      margin: 24px auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: #111827;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      text-align: left;
+      background: #f3f4f6;
+      padding: 10px;
+      border-bottom: 1px solid #d1d5db;
+    }
+    tbody td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    tbody tr:hover { background: #f9fafb; }
+    .post-content {
+      margin-bottom: 6px;
+      color: #374151;
+    }
+    .meta {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .link {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">結果一覧</div>
+    <nav>
+      <a href="/dashboard">ダッシュボード</a>
+      <a href="/monitor">モニター設定</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>モニター設定「競合監視A」の検知結果</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>投稿内容</th>
+          <th>ユーザー</th>
+          <th>フォロワー数</th>
+          <th>表示回数</th>
+          <th>投稿日時</th>
+          <th>リンク</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="post-content">新製品の発売が決定しました！詳細はこちら。</div>
+            <div class="meta">#競合 #新製品</div>
+          </td>
+          <td>@competitor123</td>
+          <td>12,500</td>
+          <td>20,000</td>
+          <td>2025-12-01 10:30</td>
+          <td><a href="https://x.com/post/12345" class="link" target="_blank">投稿を見る</a></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="post-content">割引キャンペーン開始！今だけ50%オフ。</div>
+            <div class="meta">#セール #キャンペーン</div>
+          </td>
+          <td>@competitor_sale</td>
+          <td>8,000</td>
+          <td>15,000</td>
+          <td>2025-12-02 14:15</td>
+          <td><a href="https://x.com/post/67890" class="link" target="_blank">投稿を見る</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
