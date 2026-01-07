@@ -17,6 +17,21 @@ def get_db_connection():
 def home():
     return render_template("login.html")
 
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/setting")
+def setting_page():
+    return render_template("setting.html")
+
+
+@app.route("/list")
+def list_page():
+    return render_template("list.html")
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -53,7 +68,7 @@ def login():
                     if password_hash == password:
                         flash(f"ようこそ、{user_name or db_email}さん！", "success")
                         # TODO: セッション/ログイン状態を管理する処理を追加（Flask-Login など）
-                        return redirect(url_for("home"))
+                        return redirect(url_for("dashboard"))
                     else:
                         flash("パスワードが正しくありません。", "error")
                 except Exception as e:
