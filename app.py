@@ -34,25 +34,31 @@ def login():
             conn = get_db_connection()
             cur = conn.cursor()
             
-            # TODO: 実際のテーブル名とカラム名に合わせて修正
-            # 例: SELECT id, password_hash FROM users WHERE email = %s;
+            # 実際のテーブル定義に合わせたクエリ
+            # テーブル定義:
+            # user_id PK, email UNIQUE NOT NULL, password_hash NOT NULL, user_name, created_at, updated_at
             cur.execute(
-                "SELECT id, email, password FROM users WHERE email = %s",
+                "SELECT user_id, email, password_hash, user_name FROM users WHERE email = %s",
                 (email,)
             )
-            user = cur.fetchone()
+            user = cur.fetchone()  # None or tuple(user_id, email, password_hash, user_name)
             cur.close()
             conn.close()
             
             if user:
-                # TODO: パスワードハッシュの検証処理を追加（bcryptやwerkzeugなど）
-                # 今は簡易的に直接比較（本番環境では絶対にNG）
-                if user[2] == password:  # user[2] はパスワード列と仮定
-                    flash(f"ようこそ、{email}さん！", "success")
-                    # TODO: セッション/ログイン状態を管理する処理を追加
-                    return redirect(url_for("home"))
-                else:
-                    flash("パスワードが正しくありません。", "error")
+                user_id, db_email, password_hash, user_name = user
+                # パスワードハッシュの検証
+                # 簡易比較: 入力値とDBから取得した値が完全一致ならログイン成功とする（開発用、一時対応）
+                try:
+                    if password_hash == password:
+                        flash(f"ようこそ、{user_name or db_email}さん！", "success")
+                        # TODO: セッション/ログイン状態を管理する処理を追加（Flask-Login など）
+                        return redirect(url_for("home"))
+                    else:
+                        flash("パスワードが正しくありません。", "error")
+                except Exception as e:
+                    app.logger.exception("password comparison error")
+                    flash("パスワード検証中にエラーが発生しました。", "error")
             else:
                 flash("このメールアドレスは登録されていません。", "error")
         
