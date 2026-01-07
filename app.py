@@ -2,11 +2,42 @@ import os
 from dotenv import load_dotenv
 import psycopg2
 from flask import Flask, render_template, request, flash, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
+
+# --- Flask-Login setup ---
+login_manager = LoginManager()
+login_manager.login_view = 'home'  # redirect to login page when required
+login_manager.init_app(app)
+
+
+class User(UserMixin):
+    def __init__(self, user_id, email, user_name=None):
+        self.id = str(user_id)
+        self.email = email
+        self.name = user_name
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """ユーザIDから DB を参照して User オブジェクトを返す"""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT user_id, email, user_name FROM users WHERE user_id = %s", (user_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if row:
+            uid, email, user_name = row
+            return User(uid, email, user_name)
+    except Exception:
+        app.logger.exception("failed to load user")
+    return None
 
 def get_db_connection():
     """DB接続を取得"""
@@ -18,19 +49,9 @@ def home():
     return render_template("login.html")
 
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-
-@app.route("/setting")
-def setting_page():
-    return render_template("setting.html")
-
-
-@app.route("/list")
-def list_page():
-    return render_template("list.html")
+# Dashboard and related pages are provided by the dashboard blueprint
+from dashboard import bp as dashboard_bp
+app.register_blueprint(dashboard_bp)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -67,8 +88,12 @@ def login():
                 try:
                     if password_hash == password:
                         flash(f"ようこそ、{user_name or db_email}さん！", "success")
-                        # TODO: セッション/ログイン状態を管理する処理を追加（Flask-Login など）
-                        return redirect(url_for("dashboard"))
+                        # セッションにログイン情報を保存（Flask-Login）
+                        user_obj = User(user_id, db_email, user_name)
+                        remember_flag = bool(remember)
+                        login_user(user_obj, remember=remember_flag)
+                        # blueprint 'dashboard' defines the view 'dashboard', so endpoint is 'dashboard.dashboard'
+                        return redirect(url_for("dashboard.dashboard"))
                     else:
                         flash("パスワードが正しくありません。", "error")
                 except Exception as e:

@@ -3,8 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    }
-  </style>
 </head>
 <body>
   <header>
@@ -13,7 +11,15 @@
       <a href="/dashboard" title="ダッシュボード">ダッシュボード</a>
       <a href="/setting" title="モニター設定">モニター設定</a>
       <a href="/list" title="結果一覧">結果一覧</a>
+      <a href="/logout" title="ログアウト">ログアウト</a>
     </nav>
+    <div style="color:#cbd5e1;font-size:14px;margin-left:16px"> 
+      {% if user_name %}
+        ようこそ {{ user_name }} さん（ID: {{ user_id }}）
+      {% else %}
+        ようこそ (ID: {{ user_id }})
+      {% endif %}
+    </div>
   </header>
 
   <main class="container">
@@ -35,81 +41,38 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Row 1 -->
-          <tr>
-            <td data-label="モニター名">競合監視 A</td>
-            <td data-label="キーワード">
-              <span class="tag">競合</span>
-              <span class="tag">新製品</span>
-            </td>
-            <td data-label="通知先"><span class="muted">alerts@example.com</span></td>
-            <td data-label="条件概要">
-              フォロワー数 ≥ 1,000 ／ 表示回数 ≥ 12,000 ／ 画像付き
-            </td>
-            <td data-label="有効/無効">
-              <label class="toggle" aria-label="競合監視 A を有効化">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
-            </td>
-            <td data-label="操作">
-              <div class="row-actions">
-                <button class="btn small outline" onclick="location.href='/monitor/1/edit'">編集</button>
-                <button class="btn small outline" onclick="location.href='/results?monitor=1'">結果一覧</button>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Row 2 -->
-          <tr>
-            <td data-label="モニター名">セール検知 B</td>
-            <td data-label="キーワード">
-              <span class="tag">セール</span>
-              <span class="tag">割引</span>
-            </td>
-            <td data-label="通知先"><span class="muted">marketing@example.com</span></td>
-            <td data-label="条件概要">
-              フォロワー数 ≥ 5,000 ／ 表示回数 ≥ 20,000 ／ リンクあり
-            </td>
-            <td data-label="有効/無効">
-              <label class="toggle" aria-label="セール検知 B を有効化">
-                <input type="checkbox" />
-                <span class="slider"></span>
-              </label>
-            </td>
-            <td data-label="操作">
-              <div class="row-actions">
-                <button class="btn small outline" onclick="location.href='/monitor/2/edit'">編集</button>
-                <button class="btn small outline" onclick="location.href='/results?monitor=2'">結果一覧</button>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Row 3 -->
-          <tr>
-            <td data-label="モニター名">速報監視 C</td>
-            <td data-label="キーワード">
-              <span class="tag">速報</span>
-              <span class="tag">緊急</span>
-            </td>
-            <td data-label="通知先"><span class="muted">ops@example.com</span></td>
-            <td data-label="条件概要">
-              フォロワー数 ≥ 2,000 ／ 表示回数 ≥ 8,000 ／ 動画付き
-            </td>
-            <td data-label="有効/無効">
-              <label class="toggle" aria-label="速報監視 C を有効化">
-                <input type="checkbox" checked />
-                <span class="slider"></span>
-              </label>
-            </td>
-            <td data-label="操作">
-              <div class="row-actions">
-                <button class="btn small outline" onclick="location.href='/monitor/3/edit'">編集</button>
-                <button class="btn small outline" onclick="location.href='/results?monitor=3'">結果一覧</button>
-              </div>
-            </td>
-          </tr>
-
+          {% if monitors and monitors|length > 0 %}
+            {% for m in monitors %}
+              <tr>
+                <td data-label="モニター名">{{ m.monitor_name }}</td>
+                <td data-label="キーワード">
+                  {% if m.keywords %}
+                    {% for kw in m.keywords %}
+                      <span class="tag">{{ kw }}</span>
+                    {% endfor %}
+                  {% endif %}
+                </td>
+                <td data-label="通知先"><span class="muted">{{ m.notify_email or '-' }}</span></td>
+                <td data-label="条件概要">--</td>
+                <td data-label="有効/無効">
+                  <label class="toggle" aria-label="{{ m.monitor_name }} を有効化">
+                    <input type="checkbox" {% if m.is_enabled %}checked{% endif %} />
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td data-label="操作">
+                  <div class="row-actions">
+                    <button class="btn small outline" onclick="location.href='/monitor/{{ m.monitor_id }}/edit'">編集</button>
+                    <button class="btn small outline" onclick="location.href='/results?monitor={{ m.monitor_id }}'">結果一覧</button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align:center;color:var(--muted)">モニター設定が見つかりません。</td>
+            </tr>
+          {% endif %}
         </tbody>
       </table>
     </section>
