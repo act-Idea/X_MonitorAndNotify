@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>テスト実行結果</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0f172a;
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header nav a {
+            color: #94a3b8;
+            margin-left: 1rem;
+            text-decoration: none;
+        }
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px #d1d5db;
+            padding: 2rem;
+        }
+        h1 {
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #0f172a;
+        }
+        .result-status {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .result-status.success {
+            background-color: #dcfce7;
+            border-left: 4px solid #22c55e;
+        }
+        .result-status.fail {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+        .result-status strong {
+            font-size: 1.1rem;
+        }
+        pre {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .output-section {
+            margin-bottom: 1.5rem;
+        }
+        .output-section h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .stderr pre {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+        .back-link {
+            margin-top: 2rem;
+        }
+        .back-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .tweet {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tweet-content {
+            flex: 1;
+        }
+        .tweet-metrics {
+            flex: 1;
+            text-align: center;
+        }
+        .tweet-link {
+            flex: 0 0 auto;
+        }
+        .tweet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .tweet-table th, .tweet-table td {
+            border: 1px solid #dee2e6;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .tweet-table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+        .tweet-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>結果一覧</div>
+        <nav>
+            <a href="/">ダッシュボード</a>
+            <a href="/">モニター設定</a>
+        </nav>
+    </header>
+    <main>
+        <h1>モニター設定「{{ query }}」の検知結果</h1>
+        
+        <!-- ステータス表示 -->
+        {% if returncode == 0 %}
+            <div class="result-status success">
+                <strong>✓ 成功</strong>
+                <span>終了コード: {{ returncode }}</span>
+            </div>
+        {% else %}
+            <div class="result-status fail">
+                <strong>✗ 失敗</strong>
+                <span>終了コード: {{ returncode }}</span>
+            </div>
+        {% endif %}
+
+        {% if countdown_seconds is defined and countdown_seconds|int > 0 %}
+            <div style="margin-top:1rem; padding:0.75rem; background:#fff7ed; border:1px solid #fcd34d; border-radius:6px;">
+                <strong>レート制限: </strong>
+                <span id="countdown_display" data-seconds="{{ countdown_seconds|int }}"></span>
+                <small style="color:#92400e; margin-left:0.5rem;">（自動更新されます）</small>
+            </div>
+            <script>
+                (function(){
+                    var el = document.getElementById('countdown_display');
+                    if(!el) { return; }
+                    var remaining = Number(el.dataset.seconds) || 0;
+                    if (!isFinite(remaining) || remaining <= 0) { return; }
+                    function fmt(s){
+                        var m = Math.floor(s/60);
+                        var sec = s % 60;
+                        return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+                    }
+                    function tick(){
+                        if(remaining <= 0){
+                            el.textContent = '00:00 — 再試行可能';
+                            clearInterval(timer);
+                            return;
+                        }
+                        el.textContent = fmt(remaining);
+                        remaining -= 1;
+                    }
+                    tick();
+                    var timer = setInterval(tick, 1000);
+                })();
+            </script>
+        {% endif %}
+
+        {% if tweets %}
+            <div class="output-section">
+                <h2>ツイート結果</h2>
+                <table class="tweet-table">
+                    <thead>
+                        <tr>
+                            <th>ツイートID</th>
+                            <th>内容</th>
+                            <th>エンゲージメント</th>
+                            <th>リンク</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tweet in tweets %}
+                            <tr>
+                                <td>{{ tweet.id }}</td>
+                                <td>{{ tweet.text }}</td>
+                                <td>リツイート: {{ tweet.public_metrics.retweet_count }}, 返信: {{ tweet.public_metrics.reply_count }}, いいね: {{ tweet.public_metrics.like_count }}, 引用: {{ tweet.public_metrics.quote_count }}</td>
+                                <td><a href="https://x.com/i/status/{{ tweet.id }}" target="_blank">ツイートを見る</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <!-- 標準出力セクション -->
+        <div class="output-section">
+            <h2>標準出力</h2>
+            <pre>{% if output %}{{ output }}{% else %}<em>(出力なし)</em>{% endif %}</pre>
+        </div>
+
+        <!-- 標準エラーセクション（エラーがある場合のみ表示） -->
+        {% if stderr %}
+            <div class="output-section stderr">
+                <h2>標準エラー</h2>
+                <pre>{{ stderr }}</pre>
+            </div>
+        {% endif %}
+
+        <div class="back-link">
+            <a href="/test_run">← モニター設定に戻る</a>
+        </div>
+    </main>
+</body>
+</html>

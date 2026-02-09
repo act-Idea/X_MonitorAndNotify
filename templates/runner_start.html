@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>テスト実行</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0f172a;
+      color: white;
+      padding: 1rem 2rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header nav a {
+      color: #94a3b8;
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+    header nav a:hover { text-decoration: underline; }
+    main {
+      max-width: 700px;
+      margin: 3rem auto;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 10px #d1d5db;
+      padding: 2rem;
+    }
+    h1 { font-weight: bold; font-size: 1.5rem; margin-bottom: 1rem; color: #0f172a; }
+    .form-row { display:flex; gap:0.5rem; align-items:center; }
+    .error { color: red; margin-bottom: 1rem; font-weight: bold; }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background-color: #1e40af; }
+    .note { margin-top: 1rem; color: #475569; font-size: 0.95rem; }
+    .back-link { margin-top: 1.5rem; }
+    .back-link a { color: #3b82f6; text-decoration:none; }
+    .back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>テスト実行</div>
+    <nav>
+      <a href="/">既存アプリへ</a>
+      <a href="/test_run">結果ページ</a>
+    </nav>
+  </header>
+  <main>
+    <h1>test_tweets.py を実行する</h1>
+
+    {% if countdown_seconds is defined and countdown_seconds|int > 0 %}
+        <div style="margin-top:1rem; padding:0.75rem; background:#fff7ed; border:1px solid #fcd34d; border-radius:6px;">
+            <strong>レート制限: </strong>
+            <span id="countdown_display" data-seconds="{{ countdown_seconds|int }}"></span>
+            <small style="color:#92400e; margin-left:0.5rem;">（自動更新されます）</small>
+        </div>
+        <script>
+            (function(){
+                var el = document.getElementById('countdown_display');
+                if(!el) { return; }
+                var remaining = Number(el.dataset.seconds) || 0;
+                if (!isFinite(remaining) || remaining <= 0) { return; }
+                function fmt(s){
+                    var m = Math.floor(s/60);
+                    var sec = s % 60;
+                    return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+                }
+                function tick(){
+                    if(remaining <= 0){
+                        el.textContent = '00:00 — 再試行可能';
+                        clearInterval(timer);
+                        return;
+                    }
+                    el.textContent = fmt(remaining);
+                    remaining -= 1;
+                }
+                tick();
+                var timer = setInterval(tick, 1000);
+            })();
+        </script>
+    {% endif %}
+
+    <form method="post" action="/test_run/run">
+      {% if error %}
+      <div class="error">{{ error }}</div>
+      {% endif %}
+      <div class="form-row">
+        <input type="text" name="query" placeholder="検索ワード (例: OASIS)" value="" />
+        <button type="submit">実行</button>
+      </div>
+    </form>
+
+    <div class="note">実行結果の標準出力・標準エラーは結果ページに表示されます。</div>
+
+    <div class="back-link"><a href="/">← 既存アプリに戻る</a></div>
+  </main>
+</body>
+</html>
