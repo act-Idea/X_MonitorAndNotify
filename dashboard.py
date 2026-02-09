@@ -61,13 +61,39 @@ def logout():
     logout_user()
     flash('ログアウトしました。', 'success')
     return redirect(url_for('home'))
-from flask import Flask, render_template
 
-app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return render_template("dashboard.html")
+@bp.route('/monitor/<int:monitor_id>/toggle', methods=['POST'])
+@login_required
+def toggle_monitor(monitor_id):
+    """トグルでモニター有効状態を更新"""
+    from flask import jsonify, request
+    data = request.get_json(silent=True) or {}
+    if 'is_enabled' not in data:
+        return jsonify({'success': False, 'error': 'missing is_enabled'}), 400
+    
+    is_enabled = bool(data.get('is_enabled'))
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # verify ownership
+        cur.execute("SELECT user_id FROM monitor_settings WHERE monitor_id = %s", (monitor_id,))
+        row = cur.fetchone()
+        if not row or str(row[0]) != str(current_user.get_id()):
+            cur.close()
+            conn.close()
+            return jsonify({'success': False, 'error': 'not found or unauthorized'}), 404
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        cur.execute(
+            "UPDATE monitor_settings SET is_enabled = %s, updated_at = NOW() WHERE monitor_id = %s",
+            (is_enabled, monitor_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'success': True, 'is_enabled': is_enabled})
+    except Exception as e:
+        app_logger = getattr(__import__('flask').current_app, 'logger', None)
+        if app_logger:
+            app_logger.exception('failed to toggle monitor %s', monitor_id)
+        return jsonify({'success': False, 'error': 'server error'}), 500
