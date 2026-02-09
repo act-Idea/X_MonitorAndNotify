@@ -53,6 +53,14 @@ def home():
 from dashboard import bp as dashboard_bp
 app.register_blueprint(dashboard_bp)
 
+# Setting page blueprint を追加
+from setting import bp as setting_bp
+app.register_blueprint(setting_bp)
+
+# List page blueprint を追加
+from list import bp as list_bp
+app.register_blueprint(list_bp)
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

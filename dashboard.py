@@ -55,18 +55,6 @@ def dashboard():
     return render_template('dashboard.html', user_id=user_id, user_name=getattr(current_user, 'name', None), monitors=monitors)
 
 
-@bp.route('/setting')
-@login_required
-def setting_page():
-    return render_template('setting.html')
-
-
-@bp.route('/list')
-@login_required
-def list_page():
-    return render_template('list.html')
-
-
 @bp.route('/logout')
 @login_required
 def logout():

@@ -10,7 +10,7 @@
     <nav aria-label="メインナビゲーション">
       <a href="/dashboard" title="ダッシュボード">ダッシュボード</a>
       <a href="/setting" title="モニター設定">モニター設定</a>
-      <a href="/list" title="結果一覧">結果一覧</a>
+      <a href="/results" title="結果一覧">結果一覧</a>
       <a href="/logout" title="ログアウト">ログアウト</a>
     </nav>
     <div style="color:#cbd5e1;font-size:14px;margin-left:16px"> 
@@ -25,7 +25,7 @@
   <main class="container">
     <section class="actions" aria-label="ページ操作">
       <h1>モニター設定一覧</h1>
-      <button class="btn" onclick="location.href='/monitor/new'">モニター設定を追加</button>
+      <button class="btn" onclick="location.href='/setting'">モニター設定を追加</button>
     </section>
 
     <section class="panel" aria-label="モニター設定テーブル">
@@ -62,7 +62,7 @@
                 </td>
                 <td data-label="操作">
                   <div class="row-actions">
-                    <button class="btn small outline" onclick="location.href='/monitor/{{ m.monitor_id }}/edit'">編集</button>
+                    <button class="btn small outline" onclick="location.href='/setting?id={{ m.monitor_id }}'">編集</button>
                     <button class="btn small outline" onclick="location.href='/results?monitor={{ m.monitor_id }}'">結果一覧</button>
                   </div>
                 </td>

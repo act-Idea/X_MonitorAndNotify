@@ -4,114 +4,65 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>モニター設定</title>
-  <style>
-    body {
-      font-family: "Segoe UI", "Noto Sans JP", sans-serif;
-      background-color: #f9fafb;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #fff;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 24px;
-      color: #111827;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #374151;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-    .checkbox-group {
-      margin-bottom: 16px;
-    }
-    .checkbox-group label {
-      font-weight: normal;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .toggle {
-      display: flex;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .toggle input {
-      margin-right: 8px;
-    }
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-    button {
-      padding: 10px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .save-btn {
-      background-color: #2563eb;
-      color: white;
-    }
-    .cancel-btn {
-      background-color: #e5e7eb;
-      color: #374151;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/setting.css') }}">
 </head>
 <body>
   <div class="container">
-    <h1>モニター設定</h1>
-    <form>
-      <label for="monitor_name">モニター名</label>
-      <input type="text" id="monitor_name" name="monitor_name" placeholder="例：セール検知" />
+    <h1>{% if monitor_data %}モニター設定の編集{% else %}新規モニター設定{% endif %}</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-      <label for="keyword">検索キーワード</label>
-      <input type="text" id="keyword" name="keyword" placeholder="例：マーケティング, セール" />
+    <form method="POST">
+      <label for="monitor_name">モニター名 <span style="color:red;">*</span></label>
+      <input type="text" id="monitor_name" name="monitor_name" 
+             placeholder="例：セール検知" 
+             value="{{ monitor_data.monitor_name or '' }}" required />
+
+      <label for="keyword">検索キーワード <span style="color:red;">*</span></label>
+      <input type="text" id="keyword" name="keyword" 
+             placeholder="例：マーケティング, セール（カンマ区切り）" 
+             value="{% if monitor_data.keywords %}{{ monitor_data.keywords|join(', ') }}{% endif %}" required />
 
       <label for="email">通知先メールアドレス</label>
-      <input type="email" id="email" name="email" placeholder="example@example.com" />
+      <input type="email" id="email" name="email" 
+             placeholder="example@example.com" 
+             value="{{ monitor_data.notify_email or '' }}" />
 
       <label for="followers">最低フォロワー数</label>
-      <input type="number" id="followers" name="followers" min="0" placeholder="例：1000" />
+      <input type="number" id="followers" name="followers" min="0" 
+             placeholder="例：1000" 
+             value="{{ monitor_data.followers_min or '' }}" />
 
       <label for="views">最低表示回数</label>
-      <input type="number" id="views" name="views" min="0" placeholder="例：5000" />
+      <input type="number" id="views" name="views" min="0" 
+             placeholder="例：5000" 
+             value="{{ monitor_data.views_min or '' }}" />
 
       <div class="checkbox-group">
         <label>投稿タイプ</label>
-        <label><input type="checkbox" name="type" value="image" /> 画像付き</label>
-        <label><input type="checkbox" name="type" value="video" /> 動画付き</label>
-        <label><input type="checkbox" name="type" value="link" /> リンクあり</label>
+        <label><input type="checkbox" name="type" value="image" 
+          {% if monitor_data and 'image' in monitor_data.post_types %}checked{% endif %} /> 画像付き</label>
+        <label><input type="checkbox" name="type" value="video" 
+          {% if monitor_data and 'video' in monitor_data.post_types %}checked{% endif %} /> 動画付き</label>
+        <label><input type="checkbox" name="type" value="link" 
+          {% if monitor_data and 'link' in monitor_data.post_types %}checked{% endif %} /> リンクあり</label>
       </div>
 
       <div class="toggle">
-        <input type="checkbox" id="enabled" name="enabled" checked />
+        <input type="checkbox" id="enabled" name="enabled" 
+          {% if not monitor_data or monitor_data.is_enabled %}checked{% endif %} />
         <label for="enabled">このモニターを有効にする</label>
       </div>
 
       <div class="buttons">
         <button type="submit" class="save-btn">保存</button>
-        <button type="button" class="cancel-btn" onclick="history.back()">キャンセル</button>
+        <button type="button" class="cancel-btn" onclick="location.href='/dashboard'">キャンセル</button>
       </div>
     </form>
   </div>
