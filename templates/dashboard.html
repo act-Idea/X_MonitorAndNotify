@@ -56,7 +56,7 @@
                 <td data-label="条件概要">--</td>
                 <td data-label="有効/無効">
                   <label class="toggle" aria-label="{{ m.monitor_name }} を有効化">
-                    <input type="checkbox" {% if m.is_enabled %}checked{% endif %} />
+                    <input type="checkbox" class="toggle-checkbox" data-monitor-id="{{ m.monitor_id }}" {% if m.is_enabled %}checked{% endif %} />
                     <span class="slider"></span>
                   </label>
                 </td>
@@ -81,5 +81,6 @@
       © 2025 Monitoring App — ダッシュボード
     </footer>
   </main>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>
