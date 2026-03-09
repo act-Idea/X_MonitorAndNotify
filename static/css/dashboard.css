@@ -24,6 +24,21 @@ header {
   align-items: center;
   justify-content: space-between;
 }
+
+header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logout-icon {
+  font-size: 18px;
+  color: #cbd5e1;
+  text-decoration: none;
+}
+.logout-icon:hover {
+  color: #fff;
+}
 header .brand {
   font-weight: 700;
   letter-spacing: 0.2px;

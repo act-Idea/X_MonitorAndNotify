@@ -7,18 +7,17 @@
 <body>
   <header>
     <div class="brand">モニターダッシュボード</div>
-    <nav aria-label="メインナビゲーション">
-      <a href="/dashboard" title="ダッシュボード">ダッシュボード</a>
-      <a href="/setting" title="モニター設定">モニター設定</a>
-      <a href="/results" title="結果一覧">結果一覧</a>
-      <a href="/logout" title="ログアウト">ログアウト</a>
-    </nav>
-    <div style="color:#cbd5e1;font-size:14px;margin-left:16px"> 
-      {% if user_name %}
-        ようこそ {{ user_name }} さん（ID: {{ user_id }}）
-      {% else %}
-        ようこそ (ID: {{ user_id }})
-      {% endif %}
+    <div class="header-right">
+      <div class="user-info" style="color:#cbd5e1;font-size:14px;">
+        {% if user_name %}
+          {{ user_name }} さん（ID: {{ user_id }}）
+        {% else %}
+          (ID: {{ user_id }})
+        {% endif %}
+      </div>
+      <nav aria-label="メインナビゲーション">
+        <a href="/logout" title="ログアウト" class="logout-icon">🔓</a>
+      </nav>
     </div>
   </header>
 
