@@ -48,7 +48,9 @@ def results():
                 """
                 SELECT result_id, monitor_id, user_id, post_id,
                        user_handle, content, hashtags,
-                       post_url, posted_at, detected_at
+                       post_url,
+                       to_char(posted_at, 'YYYY-MM-DD HH24:MI:SS') AS posted_at,
+                       to_char(detected_at, 'YYYY-MM-DD HH24:MI:SS') AS detected_at
                 FROM monitor_results
                 WHERE monitor_id = %s
                 ORDER BY posted_at DESC
