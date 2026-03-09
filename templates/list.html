@@ -25,29 +25,37 @@
           <tr>
             <th>投稿内容</th>
             <th>ユーザー</th>
-            <th>フォロワー数</th>
-            <th>表示回数</th>
+            <th>ハッシュタグ</th>
             <th>投稿日時</th>
             <th>リンク</th>
+            <th>検知日時</th>
           </tr>
         </thead>
         <tbody>
           {% for result in results %}
             <tr>
-              <td>
-                <div class="post-content">{{ result.post_content }}</div>
+              <td class="content-cell">
+                <div class="post-content">{{ result.content }}</div>
               </td>
-              <td>{{ result.username }}</td>
-              <td>{{ result.followers_count|default('-') }}</td>
-              <td>{{ result.views_count|default('-') }}</td>
-              <td>{{ result.posted_at }}</td>
-              <td>
+              <td class="user-cell">{{ result.user_handle }}</td>
+              <td class="hashtags-cell">
+                {% if result.hashtags %}
+                  {% for tag in result.hashtags %}
+                    <span class="tag">#{{ tag }}</span>
+                  {% endfor %}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td class="posted-cell">{{ result.posted_at }}</td>
+              <td class="link-cell">
                 {% if result.post_url %}
                   <a href="{{ result.post_url }}" class="link" target="_blank">投稿を見る</a>
                 {% else %}
                   -
                 {% endif %}
               </td>
+              <td class="detected-cell">{{ result.detected_at }}</td>
             </tr>
           {% endfor %}
         </tbody>

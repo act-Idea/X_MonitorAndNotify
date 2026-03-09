@@ -52,7 +52,41 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  table-layout: fixed; /* 固定幅で列サイズを調整 */
 }
+
+/* 投稿内容列を狭く、リンク列を広く */
+td .post-content,
+td .post-content * {
+  /* nothing */
+}
+
+/* 投稿内容セル自体に幅指定 */
+td.content-cell {
+  width: 40%;
+  word-wrap: break-word;
+}
+
+td.user-cell {
+  width: 15%;
+}
+
+td.hashtags-cell {
+  width: 15%;
+}
+
+td.posted-cell {
+  width: 10%;
+}
+
+td.link-cell {
+  width: 10%;
+}
+
+td.detected-cell {
+  width: 10%;
+}
+
 
 thead th {
   text-align: left;

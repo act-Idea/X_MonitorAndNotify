@@ -43,11 +43,12 @@ def results():
             if monitor:
                 monitor_name = monitor['monitor_name']
             
-            # 検知結果を取得（テーブル名は実装に合わせて調整してください）
+            # 検知結果を取得（テーブル定義に合わせる）
             cur.execute(
                 """
-                SELECT result_id, post_content, username, followers_count, 
-                       views_count, posted_at, post_url
+                SELECT result_id, monitor_id, user_id, post_id,
+                       user_handle, content, hashtags,
+                       post_url, posted_at, detected_at
                 FROM monitor_results
                 WHERE monitor_id = %s
                 ORDER BY posted_at DESC
