@@ -49,7 +49,7 @@ header a:hover {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 24px auto;
   background: #fff;
   padding: 24px;
@@ -59,8 +59,9 @@ header a:hover {
 
 h1 {
   font-size: 20px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: #111827;
+  font-weight: 600;
 }
 
 table {
@@ -68,63 +69,81 @@ table {
   border-collapse: collapse;
   font-size: 14px;
   table-layout: fixed; /* 固定幅で列サイズを調整 */
+  background: #fff;
 }
 
-/* 投稿内容列を狭く、リンク列を広く */
-td .post-content,
-td .post-content * {
-  /* nothing */
-}
-
-/* 投稿内容セル自体に幅指定 */
+/* 投稿内容セル自体に幅指定（投稿内容を広く、ユーザー列は少しだけ寄せる） */
 td.content-cell {
-  width: 40%;
+  width: 72%;
   word-wrap: break-word;
+  padding-right: 24px;
 }
 
 td.user-cell {
-  width: 15%;
+  width: 10%;
+  padding: 8px 12px;
 }
 
 td.hashtags-cell {
-  width: 15%;
+  width: 6%;
+  padding: 8px 4px;
+  text-align: left;
 }
 
 td.posted-cell {
-  width: 10%;
+  width: 5%;
 }
 
 td.link-cell {
-  width: 10%;
+  width: 3.5%;
+  text-align: center;
 }
 
 td.detected-cell {
-  width: 10%;
+  width: 3.5%;
 }
 
 
 thead th {
-  text-align: left;
+  text-align: center;
   background: #f3f4f6;
-  padding: 10px;
-  border-bottom: 1px solid #d1d5db;
+  padding: 12px 8px;
+  border-bottom: 2px solid #d1d5db;
   font-weight: 600;
   color: #374151;
+  font-size: 13px;
+}
+
+thead th.user-header {
+  text-align: left;
 }
 
 tbody td {
-  padding: 12px;
+  padding: 12px 8px;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: top;
+  text-align: right;
 }
 
 tbody tr:hover {
   background: #f9fafb;
 }
 
+/* ユーザー列を投稿内容側に少し寄せる（ヘッダーと実値を左寄せに） */
+thead th.user-header,
+tbody td.user-cell {
+  text-align: center;
+  padding-left: 6px;
+  padding-right: 2px;
+}
+
 .post-content {
   margin-bottom: 6px;
   color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .meta {
@@ -132,14 +151,30 @@ tbody tr:hover {
   color: #6b7280;
 }
 
+.tag {
+  display: inline-block;
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+}
+
 .link {
   color: #2563eb;
   text-decoration: none;
   font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  transition: background 0.2s;
 }
 
 .link:hover {
-  text-decoration: underline;
+  background: #dbeafe;
+  text-decoration: none;
 }
 
 .btn {
@@ -147,15 +182,17 @@ tbody tr:hover {
   background: #2563eb;
   color: #fff;
   border: 1px solid #2563eb;
-  border-radius: 8px;
-  padding: 10px 14px;
+  border-radius: 6px;
+  padding: 10px 16px;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn:hover {
   background: #1e40af;
   border-color: #1e40af;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
 }
 
 @media (max-width: 760px) {

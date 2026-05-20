@@ -27,8 +27,8 @@
             <th>ユーザー</th>
             <th>ハッシュタグ</th>
             <th>投稿日時</th>
-            <th>リンク</th>
             <th>検知日時</th>
+            <th>リンク</th>
           </tr>
         </thead>
         <tbody>
@@ -48,6 +48,7 @@
                 {% endif %}
               </td>
               <td class="posted-cell">{{ result.posted_at }}</td>
+              <td class="detected-cell">{{ result.detected_at }}</td>
               <td class="link-cell">
                 {% if result.post_url %}
                   <a href="{{ result.post_url }}" class="link" target="_blank">投稿を見る</a>
@@ -55,7 +56,6 @@
                   -
                 {% endif %}
               </td>
-              <td class="detected-cell">{{ result.detected_at }}</td>
             </tr>
           {% endfor %}
         </tbody>
