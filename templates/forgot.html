@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>パスワード再設定 — My Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="wrap">
+        <div class="card" role="main">
+            <h1>パスワード再設定</h1>
+            <p class="lead">登録済みのメールアドレスを入力してください。再設定用の案内をお送りします。</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="flash">{{ msg }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="/forgot" method="post" autocomplete="on" novalidate>
+                <div>
+                    <label for="email">メールアドレス</label>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required autofocus value="{{ email|default('') }}">
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="submit">送信</button>
+                </div>
+
+                <div style="margin-top:12px;text-align:center">
+                    <a href="/login" class="muted">ログイン画面に戻る</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

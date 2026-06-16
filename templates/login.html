@@ -26,7 +26,7 @@
 
                 <div>
                     <label for="email">メールアドレス</label>
-                    <input id="email" name="email" type="email" placeholder="you@example.com" required autofocus>
+                    <input id="email" name="email" type="email" placeholder="you@example.com" required autofocus value="{{ email|default('') }}">
                 </div>
 
                 <div>
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="actions">
-                    <label class="row"><input type="checkbox" name="remember"> <span class="muted">ログイン状態を保持する</span></label>
+                    <label class="row"><input type="checkbox" name="remember" {% if remember %}checked{% endif %}> <span class="muted">ログイン状態を保持する</span></label>
                     <button class="btn" type="submit">サインイン</button>
                 </div>
 
