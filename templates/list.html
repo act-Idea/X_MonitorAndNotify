@@ -35,7 +35,13 @@
           {% for result in results %}
             <tr>
               <td class="content-cell">
-                <div class="post-content">{{ result.content }}</div>
+                <div class="post-content">
+                  {% if result.content|length > 20 %}
+                    <span class="content-tooltip" title="{{ result.content }}">{{ result.content[:20] }}...</span>
+                  {% else %}
+                    {{ result.content }}
+                  {% endif %}
+                </div>
               </td>
               <td class="user-cell">{{ result.user_handle }}</td>
               <td class="hashtags-cell">
