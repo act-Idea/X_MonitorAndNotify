@@ -46,7 +46,7 @@
           <option value="">未設定</option>
           {% for count in range(1000, 10001, 1000) %}
             <option value="{{ count }}" {% if monitor_data.followers_min == count %}selected{% endif %}>
-              {% if count == 1000 %}~{{ "{:,}".format(count) }}{% elif count == 10000 %}{{ "{:,}".format(count) }}~{% else %}{{ "{:,}".format(count) }}{% endif %}
+              {% if count == 10000 %}{{ "{:,}".format(count) }}~{% else %}{{ "{:,}".format(count) }}{% endif %}
             </option>
           {% endfor %}
         </select>
@@ -58,7 +58,7 @@
           <option value="">未設定</option>
           {% for count in range(1000, 10001, 1000) %}
             <option value="{{ count }}" {% if monitor_data.views_min == count %}selected{% endif %}>
-              {% if count == 1000 %}~{{ "{:,}".format(count) }}{% elif count == 10000 %}{{ "{:,}".format(count) }}~{% else %}{{ "{:,}".format(count) }}{% endif %}
+              {% if count == 10000 %}{{ "{:,}".format(count) }}~{% else %}{{ "{:,}".format(count) }}{% endif %}
             </option>
           {% endfor %}
         </select>
@@ -83,7 +83,6 @@
             <span class="toggle-track"></span>
             <span class="toggle-thumb"></span>
           </label>
-          <span class="toggle-text">{% if not monitor_data or monitor_data.is_enabled %}有効{% else %}無効{% endif %}</span>
         </div>
       </div>
 
