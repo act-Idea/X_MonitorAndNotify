@@ -1,13 +1,16 @@
 import os
 import smtplib
 import psycopg2
+from pathlib import Path
 from email.message import EmailMessage
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
-load_dotenv()
+# .env ファイルを明示的に読み込む
+env_file = Path(__file__).parent / ".env_app"
+load_dotenv(env_file)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
