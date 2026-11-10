@@ -22,9 +22,13 @@
     {% if results and results|length > 0 %}
       <div class="tile-grid">
         {% for result in results %}
-          <article class="result-card {% if result.image_urls %}has-photo{% endif %}">
+          {% if result.post_url %}
+            <a class="result-card card-link{% if result.image_urls %} has-photo{% endif %}" href="{{ result.post_url }}" target="_blank" rel="noopener">
+          {% else %}
+            <article class="result-card{% if result.image_urls %} has-photo{% endif %}">
+          {% endif %}
             <div class="card-body">
-              <div class="card-user">#{{ result.user_handle or 'user' }}</div>
+              <div class="card-user">@{{ result.user_handle or 'user' }}</div>
 
               {% if result.content %}
                 <div class="card-text" title="{{ result.content }}">
@@ -49,15 +53,11 @@
                 {% endif %}
               </div>
             </div>
-
-            <div class="card-footer">
-              {% if result.post_url %}
-                <a href="{{ result.post_url }}" target="_blank" rel="noopener">投稿を見る</a>
-              {% else %}
-                <span>投稿を見る</span>
-              {% endif %}
-            </div>
-          </article>
+          {% if result.post_url %}
+            </a>
+          {% else %}
+            </article>
+          {% endif %}
         {% endfor %}
       </div>
 
@@ -83,7 +83,7 @@
         {% for i in range(9) %}
           <div class="result-card placeholder-card">
             <div class="card-body">
-              <div class="card-user">ユーザー</div>
+              <div class="card-user">@ユーザー</div>
               <div class="card-text">検知結果がまだありません。</div>
             </div>
           </div>
