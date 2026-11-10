@@ -32,9 +32,19 @@
   {% endwith %}
 
   <main class="container">
+    
     <section class="actions" aria-label="ページ操作">
       <h1>モニター設定一覧</h1>
-      <button class="btn" onclick="location.href='/setting'">モニター設定を追加</button>
+
+      <div class="action-buttons">
+        <button class="btn" onclick="location.href='/dashboard_youtube'">
+          X版／YouTube版切り替え
+        </button>
+
+        <button class="btn" onclick="location.href='/setting'">
+          モニター設定を追加
+        </button>
+      </div>
     </section>
 
     <section class="panel" aria-label="モニター設定テーブル">

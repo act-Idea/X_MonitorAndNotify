@@ -100,6 +100,20 @@ app.register_blueprint(setting_bp)
 from list import bp as list_bp
 app.register_blueprint(list_bp)
 
+
+# YouTube版 Dashboard blueprint を追加
+from dashboard_youtube import bp as dashboard_youtube_bp
+app.register_blueprint(dashboard_youtube_bp)
+
+# YouTube版 Setting blueprint を追加
+from setting_youtube import bp as setting_youtube_bp
+app.register_blueprint(setting_youtube_bp)
+
+# YouTube版 List blueprint を追加
+from list_youtube import bp as list_youtube_bp
+app.register_blueprint(list_youtube_bp)
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

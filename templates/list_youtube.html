@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube版 結果一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/list_youtube.css') }}">
+</head>
+<body>
+    <header>
+        <div class="brand">YouTube版 結果一覧</div>
+        <div class="header-right">
+            <nav>
+                <a href="/logout" title="ログアウト" class="logout-icon">🔓</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>モニター設定「{{ monitor_name }}」の検知結果</h1>
+
+        {% if results and results|length > 0 %}
+            <div class="tile-grid">
+                {% for result in results %}
+
+                    {% if result.video_url %}
+                        <a class="result-card card-link{% if result.thumbnail_url %} has-photo{% endif %}"
+                           href="{{ result.video_url }}"
+                           target="_blank"
+                           rel="noopener">
+                    {% else %}
+                        <article class="result-card{% if result.thumbnail_url %} has-photo{% endif %}">
+                    {% endif %}
+
+                        <div class="card-body">
+
+                            <div class="card-user">
+                                {{ result.channel_title or 'チャンネル名不明' }}
+                            </div>
+
+                            <div class="card-text">
+                                <strong>{{ result.video_title or 'タイトルなし' }}</strong>
+                            </div>
+
+                            {% if result.thumbnail_url %}
+                                <div class="card-images single-image">
+                                    <img class="card-image"
+                                         src="{{ result.thumbnail_url }}"
+                                         alt="動画サムネイル"
+                                         loading="lazy">
+                                </div>
+                            {% endif %}
+
+                            {% if result.video_description %}
+                                <div class="card-description">
+                                    {% set description = result.video_description[:80] %}
+                                    {{ description }}{% if result.video_description|length > 80 %}...{% endif %}
+                                </div>
+                            {% endif %}
+
+                            <div class="meta-row">
+                                <span class="pill">
+                                    再生回数：{{ result.view_count or 0 }}
+                                </span>
+                                <span class="pill">
+                                    いいね：{{ result.like_count or 0 }}
+                                </span>
+                                <span class="pill">
+                                    コメント：{{ result.comment_count or 0 }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                    {% if result.video_url %}
+                        </a>
+                    {% else %}
+                        </article>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+
+            {% if total_pages > 1 %}
+                <nav class="pagination" aria-label="検知結果のページ送り">
+
+                    {% if page > 1 %}
+                        <a class="pagination-link"
+                           href="/youtube/results?monitor={{ monitor_id }}&page={{ page - 1 }}">
+                            前へ
+                        </a>
+                    {% else %}
+                        <span class="pagination-link disabled" aria-disabled="true">
+                            前へ
+                        </span>
+                    {% endif %}
+
+                    <span class="pagination-status" aria-current="page">
+                        {{ page }} / {{ total_pages }} ページ（全 {{ total_count }} 件）
+                    </span>
+
+                    {% if page < total_pages %}
+                        <a class="pagination-link"
+                           href="/youtube/results?monitor={{ monitor_id }}&page={{ page + 1 }}">
+                            次へ
+                        </a>
+                    {% else %}
+                        <span class="pagination-link disabled" aria-disabled="true">
+                            次へ
+                        </span>
+                    {% endif %}
+
+                </nav>
+            {% endif %}
+
+        {% else %}
+            <div class="tile-grid empty-grid">
+                {% for i in range(9) %}
+                    <div class="result-card placeholder-card">
+                        <div class="card-body">
+                            <div class="card-user">YouTube動画</div>
+                            <div class="card-text">検知結果がまだありません。</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="bottom-actions">
+            <button class="btn" onclick="location.href='/dashboard_youtube'">
+                ダッシュボードに戻る
+            </button>
+        </div>
+    </main>
+</body>
+</html>

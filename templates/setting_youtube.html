@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube版 モニター設定</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/setting_youtube.css') }}">
+</head>
+<body>
+    <main class="container">
+
+        <h1>
+            {% if monitor %}
+                モニター設定の編集
+            {% else %}
+                新規モニター設定
+            {% endif %}
+        </h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="">
+            <input type="hidden" name="monitor_id"
+                   value="{{ monitor.monitor_id if monitor else '' }}">
+
+            <section class="form-panel">
+                <h2>基本設定</h2>
+
+                <div class="field">
+                    <label for="monitor_name">
+                        モニター名 <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="monitor_name"
+                        name="monitor_name"
+                        maxlength="100"
+                        value="{{ monitor.monitor_name if monitor else '' }}"
+                        placeholder="例：ちいかわ動画チェック"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="keywords">
+                        検索キーワード <span class="required">*</span>
+                    </label>
+                    <p class="help-text">
+                        複数登録する場合は、1行に1つずつ入力してください。
+                    </p>
+                    <textarea
+                        id="keywords"
+                        name="keywords"
+                        rows="4"
+                        placeholder="例：&#10;ちいかわ&#10;ポケモン"
+                        required
+                    >{% if monitor and monitor.keywords %}{{ monitor.keywords | join('\n') }}{% endif %}</textarea>
+                </div>
+
+                <div class="field">
+                    <label for="notify_email">通知先メールアドレス</label>
+                    <input
+                        type="email"
+                        id="notify_email"
+                        name="notify_email"
+                        value="{{ monitor.notify_email if monitor and monitor.notify_email else '' }}"
+                        placeholder="example@email.com"
+                    >
+                </div>
+            </section>
+
+            <section class="form-panel">
+                <h2>取得条件</h2>
+
+                <p class="help-text">
+                    条件を満たしたYouTube動画を取得対象とします。
+                    空欄の場合は、その項目の下限を指定しません。
+                </p>
+
+                <div class="field">
+                    <label for="min_views">最低再生回数</label>
+                    <input
+                        type="number"
+                        id="min_views"
+                        name="min_views"
+                        min="0"
+                        value="{{ monitor.min_views if monitor and monitor.min_views is not none else '' }}"
+                        placeholder="例：10000"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="min_likes">最低いいね数</label>
+                    <input
+                        type="number"
+                        id="min_likes"
+                        name="min_likes"
+                        min="0"
+                        value="{{ monitor.min_likes if monitor and monitor.min_likes is not none else '' }}"
+                        placeholder="例：1000"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="min_comments">最低コメント数</label>
+                    <input
+                        type="number"
+                        id="min_comments"
+                        name="min_comments"
+                        min="0"
+                        value="{{ monitor.min_comments if monitor and monitor.min_comments is not none else '' }}"
+                        placeholder="例：100"
+                    >
+                </div>
+            </section>
+
+            <div class="buttons">
+                <button type="submit" class="save-btn">保存</button>
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="location.href='/dashboard_youtube'">
+                    キャンセル
+                </button>
+            </div>
+        </form>
+
+    </main>
+</body>
+</html>

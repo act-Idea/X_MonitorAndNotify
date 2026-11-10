@@ -66,6 +66,13 @@ header a:hover { color: #fff; }
   align-items: center;
   margin-bottom: 12px;
 }
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .actions h1 {
   font-size: 20px;
   margin: 0;

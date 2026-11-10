@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube版 モニターダッシュボード</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_youtube.css') }}">
+</head>
+<body>
+    <header>
+        <div class="brand">YouTube版 モニターダッシュボード</div>
+
+        <div class="header-right">
+            <div class="user-info">
+                {% if user_name %}
+                    {{ user_name }} さん（ID: {{ user_id }}）
+                {% else %}
+                    (ID: {{ user_id }})
+                {% endif %}
+            </div>
+            <nav aria-label="メインナビゲーション">
+                <a href="/logout" title="ログアウト" class="logout-icon">🔓</a>
+            </nav>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="container">
+        <section class="actions" aria-label="ページ操作">
+            <h1>モニター設定一覧</h1>
+
+            <div class="action-buttons">
+                <button class="btn" onclick="location.href='/dashboard'">
+                    X版／YouTube版切り替え
+                </button>
+
+                <button class="btn" onclick="location.href='/youtube/setting'">
+                    モニター設定を追加
+                </button>
+            </div>
+        </section>
+
+        <section class="panel" aria-label="モニター設定テーブル">
+            <table role="table" aria-label="モニター設定一覧">
+                <thead>
+                    <tr>
+                        <th scope="col">モニター名</th>
+                        <th scope="col">キーワード</th>
+                        <th scope="col">通知先</th>
+                        <th scope="col">条件概要</th>
+                        <th scope="col">有効/無効</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% if monitors and monitors|length > 0 %}
+                        {% for monitor in monitors %}
+                            <tr>
+                                <td data-label="モニター名">
+                                    {{ monitor.monitor_name }}
+                                </td>
+
+                                <td data-label="キーワード">
+                                    {% if monitor.keywords %}
+                                        {% for kw in monitor.keywords %}
+                                            <span class="tag">{{ kw }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+
+                                <td data-label="通知先">
+                                    <span class="muted">
+                                        {{ monitor.notify_email or '-' }}
+                                    </span>
+                                </td>
+
+                                <td data-label="条件概要">
+                                    {% if monitor.min_views is not none %}
+                                        再生回数：{{ "{:,}".format(monitor.min_views) }}回<br>
+                                    {% endif %}
+                                    {% if monitor.min_likes is not none %}
+                                        いいね数：{{ "{:,}".format(monitor.min_likes) }}件<br>
+                                    {% endif %}
+                                    {% if monitor.min_comments is not none %}
+                                        コメント数：{{ "{:,}".format(monitor.min_comments) }}件
+                                    {% endif %}
+                                    {% if monitor.min_views is none and monitor.min_likes is none and monitor.min_comments is none %}
+                                        --
+                                    {% endif %}
+                                </td>
+
+                                <td data-label="有効/無効">
+                                    <label class="toggle" aria-label="{{ monitor.monitor_name }} を有効化">
+                                        <input
+                                            type="checkbox"
+                                            class="toggle-checkbox"
+                                            data-monitor-id="{{ monitor.monitor_id }}"
+                                            {% if monitor.is_enabled %}checked{% endif %}
+                                        >
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+
+                                <td data-label="操作">
+                                    <div class="row-actions">
+                                        <button
+                                            class="btn small outline"
+                                            onclick="location.href='/youtube/setting?id={{ monitor.monitor_id }}'">
+                                            編集
+                                        </button>
+
+                                        <button
+                                            class="btn small outline"
+                                            onclick="location.href='/youtube/results?monitor={{ monitor.monitor_id }}'">
+                                            結果一覧
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                モニター設定が見つかりません。
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </section>
+
+        <footer>
+            © 2025 Monitoring App — YouTube版ダッシュボード
+        </footer>
+    </main>
+</body>
+</html>
