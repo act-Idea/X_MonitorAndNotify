@@ -18,61 +18,80 @@
 
   <main class="container">
     <h1>モニター設定「{{ monitor_name }}」の検知結果</h1>
-    
+
     {% if results and results|length > 0 %}
-      <table>
-        <thead>
-          <tr>
-            <th>投稿内容</th>
-            <th>ユーザー</th>
-            <th>ハッシュタグ</th>
-            <th>投稿日時</th>
-            <th>検知日時</th>
-            <th>リンク</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for result in results %}
-            <tr>
-              <td class="content-cell">
-                <div class="post-content">
-                  {% if result.content|length > 20 %}
-                    <span class="content-tooltip" title="{{ result.content }}">{{ result.content[:20] }}...</span>
-                  {% else %}
-                    {{ result.content }}
-                  {% endif %}
+      <div class="tile-grid">
+        {% for result in results %}
+          <article class="result-card {% if result.image_urls %}has-photo{% endif %}">
+            <div class="card-body">
+              <div class="card-user">#{{ result.user_handle or 'user' }}</div>
+
+              {% if result.content %}
+                <div class="card-text" title="{{ result.content }}">
+                  {% set snippet = result.content[:40] %}
+                  {{ snippet }}{% if result.content|length > 40 %}...{% endif %}
                 </div>
-              </td>
-              <td class="user-cell">{{ result.user_handle }}</td>
-              <td class="hashtags-cell">
-                {% if result.hashtags %}
-                  {% for tag in result.hashtags %}
-                    <span class="tag">#{{ tag }}</span>
+              {% endif %}
+
+              {% if result.image_urls %}
+                <div class="card-images{% if result.image_urls|length == 1 %} single-image{% endif %}">
+                  {% for image_url in result.image_urls %}
+                    <img class="card-image" src="{{ image_url }}" alt="投稿画像" loading="lazy">
                   {% endfor %}
-                {% else %}
-                  -
+                </div>
+              {% endif %}
+
+              <div class="meta-row">
+                {% if result.hashtags %}
+                  {% for tag in result.hashtags[:2] %}
+                    <span class="pill">#{{ tag }}</span>
+                  {% endfor %}
                 {% endif %}
-              </td>
-              <td class="posted-cell">{{ result.posted_at }}</td>
-              <td class="detected-cell">{{ result.detected_at }}</td>
-              <td class="link-cell">
-                {% if result.post_url %}
-                  <a href="{{ result.post_url }}" class="link" target="_blank">投稿を見る</a>
-                {% else %}
-                  -
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              {% if result.post_url %}
+                <a href="{{ result.post_url }}" target="_blank" rel="noopener">投稿を見る</a>
+              {% else %}
+                <span>投稿を見る</span>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      {% if total_pages > 1 %}
+        <nav class="pagination" aria-label="検知結果のページ送り">
+          {% if page > 1 %}
+            <a class="pagination-link" href="{{ url_for('list.results', monitor=monitor_id, page=page - 1) }}">前へ</a>
+          {% else %}
+            <span class="pagination-link disabled" aria-disabled="true">前へ</span>
+          {% endif %}
+
+          <span class="pagination-status" aria-current="page">{{ page }} / {{ total_pages }} ページ（全 {{ total_count }} 件）</span>
+
+          {% if page < total_pages %}
+            <a class="pagination-link" href="{{ url_for('list.results', monitor=monitor_id, page=page + 1) }}">次へ</a>
+          {% else %}
+            <span class="pagination-link disabled" aria-disabled="true">次へ</span>
+          {% endif %}
+        </nav>
+      {% endif %}
     {% else %}
-      <p style="text-align:center;color:#6b7280;margin:40px 0;">
-        検知結果がまだありません。
-      </p>
+      <div class="tile-grid empty-grid">
+        {% for i in range(9) %}
+          <div class="result-card placeholder-card">
+            <div class="card-body">
+              <div class="card-user">ユーザー</div>
+              <div class="card-text">検知結果がまだありません。</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     {% endif %}
 
-    <div style="margin-top:24px;">
+    <div class="bottom-actions">
       <button class="btn" onclick="location.href='/dashboard'">ダッシュボードに戻る</button>
     </div>
   </main>
